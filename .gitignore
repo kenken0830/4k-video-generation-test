@@ -1,0 +1,36 @@
+# Ignore Python virtual environments
+venv/
+miniconda3/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore tools or binaries
+loop_pipeline/tools/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore archives and large outputs
+*.zip
+*.tar.gz
+*.tar
+*.7z
+*.rar
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Ignore logs and temp files
+*.log
+*.tmp
+*.bak
+
+# Ignore workspace or IDE files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
