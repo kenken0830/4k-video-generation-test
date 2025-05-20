@@ -1,0 +1,13 @@
+ffmpeg
+tesseract-ocr
+git
+build-essential
+pkg-config
+libnvidia-encode-535
+nvidia-cuda-toolkit
+python3-venv
+vulkan-tools
+libvulkan-dev
+glslang-tools
+wget
+bc
