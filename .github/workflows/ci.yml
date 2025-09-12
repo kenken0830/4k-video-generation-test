@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install apt packages
+        run: |
+          sudo apt-get update -y
+          sudo xargs -a apt.txt apt-get install -y --no-install-recommends
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install Python dependencies
+        run: |
+          set -ex
+          python -m pip install --upgrade pip --retries 5 --timeout 60
+          python -m pip install --prefer-binary --retries 5 --timeout 60 -r requirements.txt
+          python -m pip install "pytest>=8,<9"
+          python -m pytest --version
+      - name: Run tests
+        run: python -m pytest -q
