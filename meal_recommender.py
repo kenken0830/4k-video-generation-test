@@ -344,11 +344,17 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help="Dietary preference",
     )
     parser.add_argument(
-        "--snack/--no-snack",
+        "--snack",
         dest="include_snack",
-        action=argparse.BooleanOptionalAction,
+        action="store_true",
         default=True,
-        help="Whether to include a snack recommendation",
+        help="Include a snack recommendation (default)",
+    )
+    parser.add_argument(
+        "--no-snack",
+        dest="include_snack",
+        action="store_false",
+        help="Do not include a snack recommendation",
     )
     return parser.parse_args(argv)
 
