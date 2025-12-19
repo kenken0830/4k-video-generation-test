@@ -1,0 +1,182 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ProductKind {
+  youtube
+  note
+  app
+  music
+  other
+}
+
+enum AssetKind {
+  video
+  article
+  app_release
+  other
+}
+
+enum MetricKey {
+  // 共通
+  revenue
+  cost_minutes
+  cost_yen
+
+  // YouTube
+  views
+  impressions
+  ctr
+  avg_view_duration_sec
+  avg_view_percentage
+  subscribers_delta
+
+  // note
+  article_views
+  paid_conversions
+  churn_rate
+
+  // app
+  installs
+  dau
+  d1_retention
+  d7_retention
+  arpu
+  mrr
+}
+
+enum GateStage {
+  script
+  image_prompt
+  tts
+  edit
+  upload
+}
+
+enum GateResult {
+  pass
+  fail
+}
+
+enum DecisionAction {
+  replicate
+  improve
+  freeze
+  kill
+}
+
+model Product {
+  id        String      @id
+  kind      ProductKind
+  name      String
+  segment   String      // romance/emotion/comedy/ai etc
+  owner     String?
+  createdAt DateTime    @default(now())
+
+  assets    Asset[]
+  metrics   MetricDaily[]
+  costs     CostDaily[]
+}
+
+model Asset {
+  id          String   @id
+  productId   String
+  kind        AssetKind
+  title       String
+  templateId  String?  // 勝ち型テンプレID
+  publishedAt DateTime?
+
+  product     Product  @relation(fields: [productId], references: [id])
+  metrics     MetricDaily[]
+  costs       CostDaily[]
+  gateLogs    QualityGateLog[]
+}
+
+model MetricDaily {
+  id         String    @id
+  productId  String
+  assetId    String?
+  date       DateTime
+  metricKey  MetricKey
+  value      Float
+  source     String    // manual/import/api
+
+  product    Product   @relation(fields: [productId], references: [id])
+  asset      Asset?    @relation(fields: [assetId], references: [id])
+
+  @@index([productId, date, metricKey])
+  @@index([assetId, date, metricKey])
+}
+
+model CostDaily {
+  id        String   @id
+  productId String
+  assetId   String?
+  date      DateTime
+  minutes   Float?
+  yen       Float?
+  notes     String?
+
+  product   Product  @relation(fields: [productId], references: [id])
+  asset     Asset?   @relation(fields: [assetId], references: [id])
+
+  @@index([productId, date])
+  @@index([assetId, date])
+}
+
+model QualityGateLog {
+  id          String     @id
+  assetId     String
+  date        DateTime
+  stage       GateStage
+  result      GateResult
+  failCode    String?
+  severity    String?    // high/mid/low
+  hint        String?
+  gateVersion String?
+
+  asset       Asset      @relation(fields: [assetId], references: [id])
+
+  @@index([assetId, date])
+  @@index([stage, result])
+}
+
+model TrendDaily {
+  id     String   @id
+  date   DateTime
+  source String   // manual/rss/csv
+  topic  String
+  score  Float?
+  region String?
+  notes  String?
+
+  @@index([date])
+  @@index([topic])
+}
+
+model Decision {
+  id         String         @id
+  date       DateTime
+  targetType String         // product/asset/template
+  targetId   String
+  action     DecisionAction
+  reason     String
+  payload    String?        // JSON string
+
+  @@index([date])
+  @@index([targetType, targetId])
+}
+
+model Template {
+  id          String   @id
+  name        String
+  segment     String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

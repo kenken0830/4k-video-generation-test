@@ -24,6 +24,14 @@ Thumbs.db
 *.avi
 *.mkv
 
+# Node/Next outputs
+node_modules/
+.next/
+out/
+dev.db
+*.sqlite
+*.db-journal
+
 # Ignore logs and temp files
 *.log
 *.tmp
