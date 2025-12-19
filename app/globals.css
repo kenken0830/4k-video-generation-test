@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-slate-50 text-slate-900;
+}
+
+.card {
+  @apply bg-white rounded-lg border border-slate-200 shadow-sm p-4;
+}
+
+.section-title {
+  @apply text-lg font-semibold mb-3;
+}
+
+@layer base {
+  label {
+    @apply text-sm text-slate-700;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply rounded border border-slate-200 px-3 py-2 shadow-inner focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200;
+  }
+}
